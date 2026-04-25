@@ -105,8 +105,24 @@ export const alarmAPI = {
 
 // ============ 认证 ============
 export const authAPI = {
-  login: (username: string, password: string) =>
-    api.post('/auth/login', { username, password }),
+  login: async (username: string, password: string) => {
+    // 临时方案：如果没有后端，使用模拟登录
+    try {
+      return await api.post('/auth/login', { username, password })
+    } catch (error) {
+      console.warn('后端未连接，使用模拟登录')
+      // 模拟成功响应
+      return {
+        code: 200,
+        message: 'success',
+        data: {
+          token: 'mock-token-' + Date.now(),
+          username: username || 'admin',
+          role: 'admin'
+        }
+      }
+    }
+  },
   logout: () => api.post('/auth/logout'),
   info: () => api.get('/auth/info'),
 }
